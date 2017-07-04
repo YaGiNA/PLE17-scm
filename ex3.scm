@@ -1,9 +1,14 @@
 (define diff
   (lambda (ls)
-    (cond ((list? ls) (map diff ls))
+    (cond
           ((number? ls) 0)
           ((equal? 'x ls) 1)
-          ((or (equal? '+ ls) (equal? '- ls)) ls)
+          ((equal? '+ (car ls)) `(+ ,@(map diff (cdr ls))))
+          ((equal? '- (car ls)) `(- ,@(map diff (cdr ls))))
+          ((equal? '* (car ls)) 
+            `(+ (* ,@(car (cdr ls)) ,@(diff (cdr (cdr ls)))) (* ,@(diff (car (cdr ls))) ,@(cdr (cdr ls))))
+          )
+          (else (map diff ls))
 )))
 
-(diff '(+ 10 x))
+(diff '(* 10 x))
