@@ -16,7 +16,7 @@
           (else (map diff ls))
 )))
 
-;(diff fx)
+;;(diff fx)
 
 (define tangent-a
   (lambda (a fa)
@@ -35,7 +35,7 @@
         )
 )))
 
-;(tangent 2 fx)
+;;(tangent 2 fx)
 
 (define diff2
   (lambda (ls d)
@@ -53,44 +53,65 @@
           (else (map diff2 ls d))
 )))
 
-;(diff2 '(* y x) 'x)
+;;(diff2 '(* y x) 'x)
 
 (define delete-zero
   (lambda (lst)
     (cond
+     ((equal? '(0 0) lst) '())
      ((equal? 0 (car lst)) (cdr lst))
-     (else (cons (car lst) (delete-zero  (cdr lst)))))))
+     ((equal? 0 (cadr lst)) (car lst))
+     (else lst)
+)))
 
 (define simple+
-  (lambda (non-zero-list)
-    (cond ((null? non-zero-list) 0)
-          ((null? (cdr non-zero-list)) (car non-zero-list))
-          (else (eval (cons '+ non-zero-list) (interaction-environment)))
-      
+  (lambda (lst)
+    (cond ((list? (car lst)) (append (simple (car lst)) (cadr lst)))
+          ((list? (cadr lst)) (append (car lst) (simple (cadr lst))))
+          ((null? (delete-zero lst)) 0)
+          ((null? (cdr (delete-zero lst))) (car (delete-zero lst)))
+          ((and (number? (car lst)) (number? (cadr lst))) (eval (cons '+ (delete-zero lst)) (interaction-environment)))
+          (else (cons '+ (delete-zero lst)))
 )))
 
 (define simple-
   (lambda (lst)
-    (cond ((null? (delete-zero lst)) '-)
-          (else (eval (cons '- (delete-zero lst)) (interaction-environment)))
+    (cond ((list? (car lst)) (append (simple (car lst)) (cadr lst)))
+          ((list? (cadr lst)) (append (car lst) (simple (cadr lst))))
+          ((null? (delete-zero lst)) (car lst))
+          ((and (number? (car lst)) (number? (cadr lst))) (eval (cons '- (delete-zero lst)) (interaction-environment)))
+          (else (cons '- (delete-zero lst)))
 )))
 
 (define simple*
   (lambda (lst)
-    (cond ((or (equal? (car lst) 0) (equal? (cadr lst) 0)) 0)
+    (cond ((list? (car lst)) (append (simple (car lst)) (cadr lst)))
+          ((list? (cadr lst)) (append (car lst) (simple (cadr lst))))
+          ((or (equal? (car lst) 0) (equal? (cadr lst) 0)) 0)
           ((equal? (car lst) 1) (cadr lst))
-          ((equal? (car lst) 1) (cadr lst))
-          (else (eval (cons '* lst) (interaction-environment)))
+          ((equal? (cadr lst) 1) (car lst))
+          (else (cons '* lst))
+)))
+
+(define simple**
+  (lambda (lst)
+    (cond ((list? (car lst)) (append (simple (car lst)) (cadr lst)))
+          ((list? (cadr lst)) (append (car lst) (simple (cadr lst))))
+          ((equal? (cadr lst) 0) 1)
+          ((equal? (cadr lst) 1) (car lst))
+          (else (cons '** lst))
 )))
     
 (define simple
   (lambda (lst)
     (cond
       ((not(list? lst)) lst)
-      ((equal? '+ (car lst)) (simple+ (delete-zero (cdr lst))))
+      ((equal? '+ (car lst)) (simple+ (cdr lst)))
       ((equal? '- (car lst)) (simple- (cdr lst)))
       ((equal? '* (car lst)) (simple* (cdr lst)))
+      ((equal? '** (car lst)) (simple** (cdr lst)))
       (else (map simple lst))
 )))
 
-(simple (diff '(* x 3)))
+(simple (diff '(** x 3)))
+(append '(2) '(x))
