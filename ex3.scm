@@ -1,3 +1,4 @@
+;; ex3-1
 (define ** expt)
 (define fx '(+ (** x 4) (* -2 (** x 2)) 9) )
 (define diff
@@ -15,9 +16,10 @@
           )
           (else (map diff ls))
 )))
+ 
+(diff fx)
 
-;;(diff fx)
-
+;; ex3-2
 (define tangent-a
   (lambda (a fa)
     ((eval `(lambda (x) ,(diff fa)) (interaction-environment)) a)
@@ -35,8 +37,9 @@
         )
 )))
 
-;;(tangent 2 fx)
+(tangent 2 fx)
 
+;; ex3-3
 (define diff2
   (lambda (ls d)
     (cond
@@ -53,65 +56,6 @@
           (else (map diff2 ls d))
 )))
 
-;;(diff2 '(* y x) 'x)
+(diff2 '(* y x) 'x)
 
-(define delete-zero
-  (lambda (lst)
-    (cond
-     ((equal? '(0 0) lst) '())
-     ((equal? 0 (car lst)) (cdr lst))
-     ((equal? 0 (cadr lst)) (car lst))
-     (else lst)
-)))
-
-(define simple+
-  (lambda (lst)
-    (cond ((list? (car lst)) (append (simple (car lst)) (cadr lst)))
-          ((list? (cadr lst)) (append (car lst) (simple (cadr lst))))
-          ((null? (delete-zero lst)) 0)
-          ((null? (cdr (delete-zero lst))) (car (delete-zero lst)))
-          ((and (number? (car lst)) (number? (cadr lst))) (eval (cons '+ (delete-zero lst)) (interaction-environment)))
-          (else (cons '+ (delete-zero lst)))
-)))
-
-(define simple-
-  (lambda (lst)
-    (cond ((list? (car lst)) (append (simple (car lst)) (cadr lst)))
-          ((list? (cadr lst)) (append (car lst) (simple (cadr lst))))
-          ((null? (delete-zero lst)) (car lst))
-          ((and (number? (car lst)) (number? (cadr lst))) (eval (cons '- (delete-zero lst)) (interaction-environment)))
-          (else (cons '- (delete-zero lst)))
-)))
-
-(define simple*
-  (lambda (lst)
-    (cond ((list? (car lst)) (append (simple (car lst)) (cadr lst)))
-          ((list? (cadr lst)) (append (car lst) (simple (cadr lst))))
-          ((or (equal? (car lst) 0) (equal? (cadr lst) 0)) 0)
-          ((equal? (car lst) 1) (cadr lst))
-          ((equal? (cadr lst) 1) (car lst))
-          (else (cons '* lst))
-)))
-
-(define simple**
-  (lambda (lst)
-    (cond ((list? (car lst)) (append (simple (car lst)) (cadr lst)))
-          ((list? (cadr lst)) (append (car lst) (simple (cadr lst))))
-          ((equal? (cadr lst) 0) 1)
-          ((equal? (cadr lst) 1) (car lst))
-          (else (cons '** lst))
-)))
-    
-(define simple
-  (lambda (lst)
-    (cond
-      ((not(list? lst)) lst)
-      ((equal? '+ (car lst)) (simple+ (cdr lst)))
-      ((equal? '- (car lst)) (simple- (cdr lst)))
-      ((equal? '* (car lst)) (simple* (cdr lst)))
-      ((equal? '** (car lst)) (simple** (cdr lst)))
-      (else (map simple lst))
-)))
-
-(simple (diff '(** x 3)))
-(append '(2) '(x))
+;; ex3-4: retired
