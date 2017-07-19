@@ -1,6 +1,6 @@
 (define kakeizu
     (read
-       (open-input-file "/usr/local/class/scheme/kakeizu")))
+       (open-input-file "kakeizu")))
 
 (define get-depth
   (lambda (ls depth)
