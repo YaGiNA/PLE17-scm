@@ -16,7 +16,7 @@
    (lambda (fn tree)
       (cond ((null? tree) '() )
           ((pair? tree)
-           (map (lambda(tree) (map-tree fn tree)) tree)
+           (map (lambda(tree) (map-tree2 fn tree)) tree)
           )
           (else (fn tree))
    )))
